@@ -17,7 +17,7 @@ let posters =[
 function App() {
 
 const PosterButton = ({d}) => (
-    
+    // кнопка отримує id таке саме як і постер id
     <button onClick={clickPosterButton} id={d}> Видалити постер </button>
 )
 const Poster = ({poster}) => (
@@ -29,25 +29,23 @@ const Poster = ({poster}) => (
   </div>
 )
   const clickPosterButton = (e)=>{
-  console.log(e);
+  let newPstrs = state.filter( p => p.id.toString() !== e.target.id)
+  setState([...newPstrs])
 }
   // У стейті зберігаємо весь масив, та змінну напрямку видалення
-  const [state,setState] = useState({
-    p:[...posters],
-  })
+  const [state,setState] = useState([...posters])
+  
   const clickReset= ()=>{
     // заганяємо у стейт масив заново
-    setState({
-        ...state,
-        p:[...posters]
-      })
+    setState([...posters])
     }
+
   return (
     <div className="App">
       <button onClick={clickReset}> Reset </button>
       <div className="cards">
         {
-          state.p.map( poster=>
+          state.map( poster=>
             <Poster key={poster.id} poster={poster}/>)
         }
       </div>
