@@ -1,5 +1,6 @@
 .App {
   width: 80%;
+  box-sizing: border-box;
   
 }
 .cards {
@@ -17,6 +18,7 @@
   padding: 3px;
   border: 3px solid green;
   border-radius: 3px;
+  flex-direction: column;
 }
 img {
   width:100%;
