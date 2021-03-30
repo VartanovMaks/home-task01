@@ -3,24 +3,21 @@
   box-sizing: border-box;
   
 }
-.cards {
+.btn-div {
   width: 80%;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
-.poster-card{
+button {
   width: 30%;
   margin: 5px;
   padding: 3px;
-  border: 3px solid green;
-  border-radius: 3px;
-  flex-direction: column;
+  /* border: 3px solid green; */
+  background-color: lightcoral;
+  border-radius: 10px;
+  font-size: 20px;
 }
-img {
-  width:100%;
 
-}
