@@ -8,7 +8,14 @@ const tabs=[{id:0,name:'Posts', url:'https://jsonplaceholder.typicode.com/posts'
             {id:4,name:'Users', url:'https://jsonplaceholder.typicode.com/users'},
             {id:5,name:'Comments', url:'https://jsonplaceholder.typicode.com/comments'}
           ]
-
+const fields=[  ['postId','id', 'name', 'email', 'body'],
+                ['albumId','id', 'title', 'url', 'thumbnailUrl'],
+                ['userId','id', 'title'],
+                ['userId','id', 'title', 'completed'],
+                ['postId','id', 'name', 'email', 'body']
+              ]
+              //[id:4,name:'Users', url:'https://jsonplaceholder.typicode.com/users'],
+              
 const App = () =>{
  
  const [tabList, setTabList] = useState([])
