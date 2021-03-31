@@ -14,12 +14,39 @@ const App = () =>{
  const [tabList, setTabList] = useState([])
  const [tabSelected, setTabSelected] = useState(tabs[0])
 
+ const BTNComponent = ({tab}) =>{
+   return (
+    <>
+      <button onClick={()=> clickBtn({tab})} id={tab.id} key={tab.name}>{tab.name}</button>
+    </>
+   )
+}
+
+const LIComponent = ({objData}) =>{
+  const propArr = [];
+  // Масив стічок, які складаються з проперті та її 
+  // На жаль я не знайшов свій шаблон рекурсивної функції, тому роблю вже "щоб було"
+  for (let prop in objData) {
+    if (typeof objData[prop] !== 'object') {
+        propArr.push(`${prop} : ${objData[prop]}`);
+    } else {
+      let value = JSON.stringify( objData[prop]);
+      propArr.push(`${prop} : ${value}`);
+    }
+  }  
+    return (
+      <>
+        <li> 
+          {/* Кожна пропертя у своєму діві */}
+          {propArr.map( (prop) => <div>{prop}</div>)}
+        </li>
+      </>
+   )
+}
   const fetchLoad = async()=>{
     const response = await fetch(tabSelected.url);
     const data = await response.json();
-    console.log(data)
     setTabList(data)
-    // console.log(tabList)
   }
 
   // Mount & Unmount
@@ -30,24 +57,24 @@ const App = () =>{
 
   // Update
   useEffect( ()=>{
-    fetchLoad();
+    fetchLoad()
   },[tabSelected])
   
   const clickBtn = ({tab}) =>{
     let newTab = JSON.parse(JSON.stringify(tab))
-    console.log(newTab)
     setTabSelected(newTab)
   }
-
+  
+  
   return (
     <>
       <div className='btn-div'>
-        {tabs.map(tab => <button onClick={()=> clickBtn({tab})}id={tab.id} key={tab.name}>{tab.name}</button>)}
+        {tabs.map(tab => <BTNComponent tab={tab} />)}
       </div>
       <hr />
       <div className='main-div'>
         <ul>
-        {tabList.map(item => <li key={item.id}>{tabSelected.name} {item.length} : {item.id}</li>)}
+        {tabList.map(item => <LIComponent objData = {item} /> )}
         </ul>
       </div>
     </>
