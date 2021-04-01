@@ -1,90 +1,149 @@
 import './App.css';
 import React, {Component, useState, useEffect} from 'react';
 
-const tabs=[{id:0,name:'Posts', url:'https://jsonplaceholder.typicode.com/posts'},
-            {id:1,name:'Photos', url:'https://jsonplaceholder.typicode.com/photos'},
-            {id:2,name:'Albums', url:'https://jsonplaceholder.typicode.com/albums'},
-            {id:3,name:'Todos', url:'https://jsonplaceholder.typicode.com/todos'},
-            {id:4,name:'Users', url:'https://jsonplaceholder.typicode.com/users'},
-            {id:5,name:'Comments', url:'https://jsonplaceholder.typicode.com/comments'}
-          ]
-const fields=[  ['postId','id', 'name', 'email', 'body'],
-                ['albumId','id', 'title', 'url', 'thumbnailUrl'],
-                ['userId','id', 'title'],
-                ['userId','id', 'title', 'completed'],
-                ['postId','id', 'name', 'email', 'body']
-              ]
-              //[id:4,name:'Users', url:'https://jsonplaceholder.typicode.com/users'],
-              
-const App = () =>{
- 
- const [tabList, setTabList] = useState([])
- const [tabSelected, setTabSelected] = useState(tabs[0])
+const Tabs = ({tabs, selectedTab}) =>{
 
- const BTNComponent = ({tab}) =>{
-   return (
-    <>
-      <button onClick={()=> clickBtn({tab})} id={tab.id} key={tab.name}>{tab.name}</button>
-    </>
-   )
+  return(
+    <div style={{
+      // displayFlex вмнесто display-flex
+      //flex:1
+    }}>
+      {tabs.map(tab=> 
+        <button style={{ height: '50px', background:selectedTab === tab.title ? 'green':'lightgrey'}} 
+                onClick={tab.clickHandler}>{tab.title}</button>)
+      }
+    </div>
+  )
 }
 
-const LIComponent = ({objData}) =>{
-  const propArr = [];
-  // Масив стічок, які складаються з проперті та її 
-  // На жаль я не знайшов свій шаблон рекурсивної функції, тому роблю вже "щоб було"
-  for (let prop in objData) {
-    if (typeof objData[prop] !== 'object') {
-        propArr.push(`${prop} : ${objData[prop]}`);
-    } else {
-      let value = JSON.stringify( objData[prop]);
-      propArr.push(`${prop} : ${value}`);
+const PostList = ({posts})=>{
+  return(
+    <>
+      {posts.map( post =>(
+          <div>
+            <h3>{post.title}</h3>
+            <p>{post.body}</p>
+          </div>
+      ))}
+    </>
+  )
+}
+const CommentList = ({comments})=>{
+  return(
+    <>
+      {comments.map( comment =>(
+          <div>
+            <h3>{comment.name}</h3>
+            <p>{comment.body}</p>
+          </div>
+      ))}
+    </>
+  )
+}
+const AlbumList = ({albums})=>{
+  return(
+    <>
+      {albums.map( album =>(
+          <div>
+            <h3>{album.title}</h3>
+          </div>
+      ))}
+    </>
+  )
+}
+const PhotoList = ({photos})=>{
+  return(
+    <>
+      {photos.map( photo =>(
+          <div>
+            <h3>{photo.title}</h3>
+            <p>{photo.url}</p>
+          </div>
+      ))}
+    </>
+  )
+}
+const TodoList = ({todos})=>{
+  return(
+    <>
+      {todos.map( todo =>(
+          <div>
+            <h3>{todo.title}</h3>
+            <p>{todo.completed.toString()}</p>
+          </div>
+      ))}
+    </>
+  )
+}
+const UserList = ({users})=>{
+  return(
+    <>
+      {users.map( user =>(
+          <div>
+            <h3>{user.name}</h3>
+            <p>{user.username}</p>
+          </div>
+      ))}
+    </>
+  )
+}
+
+
+const urlBuilder = (resourse) => `https://jsonplaceholder.typicode.com/${resourse}`
+
+function App() {
+  const onTabChangeHandler = (tab)=>{
+    if (tab !== selectedTab){
+      setSelectedTab(tab);
+      setList([])
     }
-  }  
-    return (
-      <>
-        <li> 
-          {/* Кожна пропертя у своєму діві */}
-          {propArr.map( (prop) => <div>{prop}</div>)}
-        </li>
-      </>
-   )
-}
-  const fetchLoad = async()=>{
-    const response = await fetch(tabSelected.url);
+  }
+
+  const tabs = [
+    {title:'posts', clickHandler:()=>onTabChangeHandler('posts')},
+    {title:'comments', clickHandler:()=>onTabChangeHandler('comments')},
+    {title:'albums', clickHandler:()=>onTabChangeHandler('albums')},
+    {title:'photos', clickHandler:()=>onTabChangeHandler('photos')},
+    {title:'todos', clickHandler:()=>onTabChangeHandler('todos')},
+    {title:'users', clickHandler:()=>onTabChangeHandler('users')},
+  ]
+  // const tabs = [
+  //   {title:'posts', clickHandler:()=>setSelectedTab('posts')},
+  //   {title:'comments', clickHandler:()=>setSelectedTab('comments')},
+  //   {title:'albums', clickHandler:()=>setSelectedTab('albums')},
+  //   {title:'photos', clickHandler:()=>setSelectedTab('photos')},
+  //   {title:'todos', clickHandler:()=>setSelectedTab('todos')},
+  //   {title:'users', clickHandler:()=>setSelectedTab('users')},
+  // ]
+  const [selectedTab, setSelectedTab] = useState(tabs[0].title)
+  const [list, setList] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const fetchData = async ()=>{
+    setIsLoading(true)
+    const response = await fetch(urlBuilder(selectedTab));
     const data = await response.json();
-    setTabList(data)
+    setList(data)
+    setIsLoading(false)
   }
+  useEffect(()=>{
+    fetchData()
+  },[selectedTab])
 
-  // Mount & Unmount
-  useEffect( ()=>{
-    fetchLoad();
-    return ()=> setTabList(null)
-  },[])
-
-  // Update
-  useEffect( ()=>{
-    fetchLoad()
-  },[tabSelected])
-  
-  const clickBtn = ({tab}) =>{
-    let newTab = JSON.parse(JSON.stringify(tab))
-    setTabSelected(newTab)
-  }
-  
-  
   return (
-    <>
-      <div className='btn-div'>
-        {tabs.map(tab => <BTNComponent tab={tab} />)}
+      <div className='App'>
+         <Tabs tabs={tabs} selectedTab={selectedTab} />
+         {isLoading ? <h1> LOADING DATA...</h1> :  (
+           <>
+            {selectedTab === 'posts' && <PostList posts={list} />}
+            {selectedTab === 'comments' && <CommentList comments={list} />}
+            {selectedTab === 'albums' && <AlbumList albums={list} />}
+            {selectedTab === 'photos' && <PhotoList photos={list} />}
+            {selectedTab === 'todos' && <TodoList todos={list} />}
+            {selectedTab === 'users' && <UserList users={list} />}
+            </>
+         )}
       </div>
-      <hr />
-      <div className='main-div'>
-        <ul>
-        {tabList.map(item => <LIComponent objData = {item} /> )}
-        </ul>
-      </div>
-    </>
   )
 
 }
