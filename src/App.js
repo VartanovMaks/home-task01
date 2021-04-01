@@ -16,10 +16,10 @@ const Tabs = ({tabs, selectedTab}) =>{
   )
 }
 
-const PostList = ({posts})=>{
+const PostList = ({list})=>{
   return(
     <>
-      {posts.map( post =>(
+      {list.map( post =>(
           <div>
             <h3>{post.title}</h3>
             <p>{post.body}</p>
@@ -28,10 +28,10 @@ const PostList = ({posts})=>{
     </>
   )
 }
-const CommentList = ({comments})=>{
+const CommentList = ({list})=>{
   return(
     <>
-      {comments.map( comment =>(
+      {list.map( comment =>(
           <div>
             <h3>{comment.name}</h3>
             <p>{comment.body}</p>
@@ -40,10 +40,10 @@ const CommentList = ({comments})=>{
     </>
   )
 }
-const AlbumList = ({albums})=>{
+const AlbumList = ({list})=>{
   return(
     <>
-      {albums.map( album =>(
+      {list.map( album =>(
           <div>
             <h3>{album.title}</h3>
           </div>
@@ -51,10 +51,10 @@ const AlbumList = ({albums})=>{
     </>
   )
 }
-const PhotoList = ({photos})=>{
+const PhotoList = ({list})=>{
   return(
     <>
-      {photos.map( photo =>(
+      {list.map( photo =>(
           <div>
             <h3>{photo.title}</h3>
             <p>{photo.url}</p>
@@ -63,10 +63,10 @@ const PhotoList = ({photos})=>{
     </>
   )
 }
-const TodoList = ({todos})=>{
+const TodoList = ({list})=>{
   return(
     <>
-      {todos.map( todo =>(
+      {list.map( todo =>(
           <div>
             <h3>{todo.title}</h3>
             <p>{todo.completed.toString()}</p>
@@ -75,10 +75,10 @@ const TodoList = ({todos})=>{
     </>
   )
 }
-const UserList = ({users})=>{
+const UserList = ({list})=>{
   return(
     <>
-      {users.map( user =>(
+      {list.map( user =>(
           <div>
             <h3>{user.name}</h3>
             <p>{user.username}</p>
@@ -90,6 +90,26 @@ const UserList = ({users})=>{
 
 
 const urlBuilder = (resourse) => `https://jsonplaceholder.typicode.com/${resourse}`
+const POSTS ='posts'   
+const COMMENTS ='comments'  
+const ALBUMS ='albums'  
+const PHOTOS ='photos'  
+const TODOS ='todos'  
+const USERS = 'users' 
+
+// const posts = 'posts1'
+// const Components = {
+//   [posts]:1,
+// }
+
+const Components = {
+  [POSTS]:PostList,
+  [COMMENTS]:CommentList,
+  [ALBUMS]:AlbumList,
+  [PHOTOS]:PhotoList,
+  [TODOS]:TodoList,
+  [USERS]:UserList,
+}
 
 function App() {
   const onTabChangeHandler = (tab)=>{
@@ -100,12 +120,12 @@ function App() {
   }
 
   const tabs = [
-    {title:'posts', clickHandler:()=>onTabChangeHandler('posts')},
-    {title:'comments', clickHandler:()=>onTabChangeHandler('comments')},
-    {title:'albums', clickHandler:()=>onTabChangeHandler('albums')},
-    {title:'photos', clickHandler:()=>onTabChangeHandler('photos')},
-    {title:'todos', clickHandler:()=>onTabChangeHandler('todos')},
-    {title:'users', clickHandler:()=>onTabChangeHandler('users')},
+    {title:POSTS, clickHandler:()=>onTabChangeHandler(POSTS)},
+    {title:COMMENTS, clickHandler:()=>onTabChangeHandler(COMMENTS)},
+    {title:ALBUMS, clickHandler:()=>onTabChangeHandler(ALBUMS)},
+    {title:PHOTOS, clickHandler:()=>onTabChangeHandler(PHOTOS)},
+    {title:TODOS, clickHandler:()=>onTabChangeHandler(TODOS)},
+    {title:USERS, clickHandler:()=>onTabChangeHandler(USERS)},
   ]
   // const tabs = [
   //   {title:'posts', clickHandler:()=>setSelectedTab('posts')},
@@ -129,19 +149,20 @@ function App() {
   useEffect(()=>{
     fetchData()
   },[selectedTab])
-
+  const ComponentToRender = Components[selectedTab]
   return (
       <div className='App'>
          <Tabs tabs={tabs} selectedTab={selectedTab} />
          {isLoading ? <h1> LOADING DATA...</h1> :  (
-           <>
-            {selectedTab === 'posts' && <PostList posts={list} />}
-            {selectedTab === 'comments' && <CommentList comments={list} />}
-            {selectedTab === 'albums' && <AlbumList albums={list} />}
-            {selectedTab === 'photos' && <PhotoList photos={list} />}
-            {selectedTab === 'todos' && <TodoList todos={list} />}
-            {selectedTab === 'users' && <UserList users={list} />}
-            </>
+           <ComponentToRender list={list}/>
+          //  <>
+          //   {selectedTab === POSTS && <PostList posts={list} />}
+          //   {selectedTab === COMMENTS && <CommentList comments={list} />}
+          //   {selectedTab === ALBUMS && <AlbumList albums={list} />}
+          //   {selectedTab === PHOTOS && <PhotoList photos={list} />}
+          //   {selectedTab === TODOS && <TodoList todos={list} />}
+          //   {selectedTab === USERS && <UserList users={list} />}
+          //   </>
          )}
       </div>
   )
